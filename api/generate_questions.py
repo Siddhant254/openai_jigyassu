@@ -6,13 +6,21 @@ from langchain_core.output_parsers import StrOutputParser
 from utils.vector_store import retrieve_from_vector_db
 import re
 
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
+
+openai_api_key = os.getenv("OPENAI_API_KEY")
+
+
 router = APIRouter()
 
 # 🧠 LLM setup
 llm = ChatOpenAI(
     model="gpt-4o",
     temperature=0.7,
-    openai_api_key="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"
+    openai_api_key= openai_api_key
 )
 
 # 📥 Request model

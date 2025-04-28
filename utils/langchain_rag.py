@@ -3,9 +3,14 @@ from langchain.chat_models import ChatOpenAI
 from langchain_core.output_parsers import StrOutputParser
 from langchain.chains import LLMChain
 import os
+from dotenv import load_dotenv
+
+load_dotenv()
+
+openai_api_key = os.getenv("OPENAI_API_KEY")
 
 # ✅ OpenAI LLM setup
-oai_api_key = "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"  # Replace with your actual key or use env variable
+oai_api_key = openai_api_key
 llm = ChatOpenAI(model="gpt-3.5-turbo", temperature=0.7, openai_api_key=oai_api_key)
 output_parser = StrOutputParser()
 

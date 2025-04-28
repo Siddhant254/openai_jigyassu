@@ -5,6 +5,13 @@ from langchain.prompts import PromptTemplate
 from langchain_core.output_parsers import StrOutputParser
 from utils.vector_store import retrieve_from_vector_db
 from random import choice
+from dotenv import load_dotenv
+import os 
+
+load_dotenv()
+
+openai_api_key = os.getenv("OPENAI_API_KEY")
+
 
 router = APIRouter()
 
@@ -12,7 +19,7 @@ router = APIRouter()
 llm = ChatOpenAI(
     model="gpt-3.5-turbo",
     temperature=0.7,
-    openai_api_key="sk-proj-1-..."  
+    openai_api_key= openai_api_key
 )
 output_parser = StrOutputParser()
 

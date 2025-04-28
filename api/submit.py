@@ -3,43 +3,82 @@ from pydantic import BaseModel
 from langchain.chat_models import ChatOpenAI
 from langchain.prompts import PromptTemplate
 from langchain_core.output_parsers import StrOutputParser
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
+
+openai_api_key = os.getenv("OPENAI_API_KEY")
 
 router = APIRouter()
 
-llm = ChatOpenAI(model="gpt-3.5-turbo", temperature=0.0, openai_api_key="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")
+# 🧠 ChatOpenAI Setup
+llm = ChatOpenAI(
+    model="gpt-4o",
+    temperature=0.0,  # Keep temperature 0 for evaluation tasks
+    openai_api_key=openai_api_key
+)
 
-class ValidationInput(BaseModel):
-    problem_statement: str
-    code: str
+# 📥 Request model for answer comparison
+class AnswerComparisonRequest(BaseModel):
+    user_answers: list[str]
+    correct_answers: list[str]
 
-@router.post("/submit/")
-async def validate_solution(input: ValidationInput):
+# 📝 Answer Comparison Prompt Template
+comparison_prompt = PromptTemplate(
+    input_variables=["user_answer", "correct_answer"],
+    template="""
+You are an educational expert. Compare the user's answer with the correct answer.
+
+User's answer: {user_answer}
+Correct answer: {correct_answer}
+
+Respond only with 'correct' if user's answer is sufficiently accurate, or 'incorrect' if it is not.
+No explanation. Only respond with one word: correct or incorrect.
+"""
+)
+
+output_parser = StrOutputParser()
+
+# Create a chain
+comparison_chain = comparison_prompt | llm | output_parser
+
+# 🚀 Endpoint to compare multiple answers
+@router.post("/compare-answers/")
+async def compare_answers(request: AnswerComparisonRequest):
     try:
-        prompt = PromptTemplate(
-            input_variables=["problem", "code"],
-            template=
-            """
-            You are an expert programming evaluator.
-            Your task is to determine whether the given code correctly solves the provided problem.
+        if len(request.user_answers) != len(request.correct_answers):
+            raise HTTPException(status_code=400, detail="Number of user and correct answers do not match.")
 
-            ### Problem:
-            {problem}
+        correct_count = 0
+        wrong_count = 0
+        detailed_results = []
 
-            ### User's Code:
-            {code}
-            Respond with one of the following options:Correct solution or Incorrect solution.
-            Also tell the topics and areas of improvement for the user by analyzing the code written by the user.
-            """ )
-        
-        output_parser = StrOutputParser()
-        chain = prompt | llm | output_parser
+        for user_answer, correct_answer in zip(request.user_answers, request.correct_answers):
+            # Chain invocation
+            result = comparison_chain.invoke({
+                "user_answer": user_answer,
+                "correct_answer": correct_answer
+            })
 
-        result = chain.invoke({
-            "problem": input.problem_statement,
-            "code": input.code})
+            result = result.strip().lower()
 
-        return {"result": result.strip()}
+            if result == "correct":
+                correct_count += 1
+                detailed_results.append("correct")
+            else:
+                wrong_count += 1
+                detailed_results.append("incorrect")
+
+        total_questions = len(request.correct_answers)
+        percentage = (correct_count / total_questions) * 100 if total_questions > 0 else 0
+
+        return {
+            "correct_count": correct_count,
+            "wrong_count": wrong_count,
+            "percentage_correct": round(percentage, 2),
+            "detailed_results": detailed_results
+        }
+
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
-
-        

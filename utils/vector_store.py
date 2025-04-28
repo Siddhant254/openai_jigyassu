@@ -4,6 +4,14 @@ from langchain_core.documents import Document
 from langchain_community.embeddings import OpenAIEmbeddings
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
+
+openai_api_key = os.getenv("OPENAI_API_KEY")
+
+
 # ✅ FAISS DB path
 FAISS_PATH = r"C:\Users\Admin\Desktop\Openai\Jigyassu_Backend\data\vectors\index.faiss"
 
@@ -15,7 +23,7 @@ if not os.path.exists(directory):
 
 # ✅ OpenAI Embedding model (API key can be stored in an environment variable)
 embedding_function = OpenAIEmbeddings(
-    openai_api_key="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"  # Replace with your actual key or use environment variable
+    openai_api_key= openai_api_key # Replace with your actual key or use environment variable
 )
 
 # ✅ Text splitter for long documents
