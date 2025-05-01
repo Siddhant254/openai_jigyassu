@@ -16,7 +16,7 @@ class CodingRequest(BaseModel):
     query: str
     difficulty: str = "medium"  # default to "medium" if not provided
 
-@router.post("/coding-exercise/")
+@router.post("/coding-exercise")
 async def coding_exercise(request: CodingRequest):
     try:
         # 1️⃣ Retrieve relevant content from the vector store using RAG

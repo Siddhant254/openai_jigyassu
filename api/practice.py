@@ -7,7 +7,7 @@ import io
 
 router = APIRouter()
 
-@router.post("/upload/")
+@router.post("/upload")
 async def upload_file(file: UploadFile = File(...)):
     print("check")
     """

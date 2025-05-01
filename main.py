@@ -7,9 +7,13 @@ from api.generate_questions import router as questions_router
 from api.generate_answers import router as answers_router
 from api.compare_answers import router as compare_answers_routers
 from fastapi.middleware.cors import CORSMiddleware
-
+from utils.vector_store import init_faiss
 app = FastAPI()
 
+# Initialize FAISS on app startup
+@app.on_event("startup")
+async def startup():
+    init_faiss()
 #  Add CORS middleware to the main FastAPI app
 app.add_middleware(
     CORSMiddleware,
@@ -30,4 +34,4 @@ app.include_router(compare_answers_routers,prefix="/api")
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)

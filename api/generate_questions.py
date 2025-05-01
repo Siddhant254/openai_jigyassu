@@ -34,7 +34,7 @@ prompt = PromptTemplate(
     template=""" 
 You are an expert educational content generator for the subject: {subject}.
 
-Using ONLY the content provided below, generate exactly 10 questions from the chapter "{chapter_name}" in the following format:
+Using ONLY the content provided below, generate exactly 10 questions from the chapter related to "{chapter_name}" in the following format:
 
 - 4 Multiple Choice Questions along with 4 options  
 - 2 Short Answer Questions  
@@ -69,7 +69,8 @@ D. Earthquake shaking the ground
 
 Do not include the answers for the generated questions in your response.
 
-If the study material is irrelevant to the chapter, respond ONLY with: "Nothing found."
+If the content seems general but related, attempt to create questions anyway.
+Only respond with "Nothing found" if there's clearly no usable information at all."
 
 Study Material:
 {context}
@@ -80,8 +81,9 @@ output_parser = StrOutputParser()
 qa_chain = prompt | llm | output_parser
 
 # 🚀 Endpoint
-@router.post("/generate-qa/")
+@router.post("/generate-qa")
 async def generate_qa(request: QARequest):
+    print(f"🔍 Inside try block: Subject = {request.subject}, Chapter = {request.chapter_name}")
     try:
         query = f"{request.subject} - {request.chapter_name}"
         context = retrieve_from_vector_db(query)
@@ -183,7 +185,7 @@ async def generate_qa(request: QARequest):
             # Add the last MCQ if it exists and wasn't added
             if current_mcq and len(current_mcq["options"]) > 0:
                 questions["mcq"].append(current_mcq)
-
+        print(questions)
         return questions if any(questions.values()) else {"questions": "Nothing found."}
 
     except Exception as e:

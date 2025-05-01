@@ -11,95 +11,29 @@ openai_api_key = os.getenv("OPENAI_API_KEY")
 
 # ✅ OpenAI LLM setup
 oai_api_key = openai_api_key
-llm = ChatOpenAI(model="gpt-3.5-turbo", temperature=0.7, openai_api_key=oai_api_key)
+llm = ChatOpenAI(model="gpt-4o", temperature=0.7, openai_api_key=oai_api_key)
 output_parser = StrOutputParser()
-
-# FEW_SHOT_EXAMPLES = """
-# === BEGIN ===
-
-# **Title**: Sum of Even Numbers  
-# **Description**:  
-# Given a positive integer N, compute the sum of all even numbers from 1 to N inclusive.  
-
-# **Input**:  
-# A single integer N.  
-
-# **Output**:  
-# A single integer representing the sum of even numbers from 1 to N.  
-
-# **Constraints**:  
-# 1 ≤ N ≤ 1000  
-
-# **Examples**:  
-# Input: 10  
-# Output: 30  
-
-# Input: 7  
-# Output: 12  
-
-# === END ===
-
-# === BEGIN ===
-
-# **Title**: Count Vowels in a String  
-# **Description**:  
-# Given a string consisting of lowercase English letters, determine how many vowels it contains.  
-
-# **Input**:  
-# A single string of lowercase characters.  
-
-# **Output**:  
-# An integer representing the number of vowels in the string.  
-
-# **Constraints**:  
-# 1 ≤ Length of string ≤ 100  
-
-# **Examples**:  
-# Input: "education"  
-# Output: 5  
-
-# Input: "sky"  
-# Output: 0  
-
-# === END ===
-
-# === BEGIN ===
-
-# **Title**: Find Maximum in List  
-# **Description**:  
-# You are given a list of integers. Your task is to return the maximum value from the list.  
-
-# **Input**:  
-# A list of integers separated by spaces.  
-
-# **Output**:  
-# An integer representing the largest number in the list.  
-
-# **Constraints**:  
-# 1 ≤ Number of elements ≤ 100  
-# -1000 ≤ Each element ≤ 1000  
-
-# **Examples**:  
-# Input: [4, 8, 1, 9]  
-# Output: 9  
-
-# Input: [-3, -1, -7]  
-# Output: -1  
-
-# === END ===
-# """
-
 # --- Buggy Code Prompt ---
 def generate_buggy_code(context: list, language: str, difficulty: str) -> str:
     prompt = PromptTemplate(
         input_variables=["context", "language", "difficulty"],
         template="""
-You are a coding instructor.
-Generate a single {language} function that intentionally contains a {difficulty}-level bug.
-Use only the context below:
-{context}
+You are a programming instructor.
 
-Do not include explanations or formatting. Return only the buggy code.
+Generate a {language} code snippet related to the topic: {context}.
+
+Instructions:
+- Introduce bugs based on the selected difficulty:
+  - easy: 1 simple bug (e.g., typo, wrong operator, off-by-one).
+  - medium: 2 subtle bugs (e.g., flawed logic, wrong data type, bad loop condition).
+  - hard: 3 or more complex bugs (e.g., edge case failures, incorrect algorithm design, nested logic flaws, misuse of built-in functions).
+- The bugs must be realistic and challenge learners to identify and fix them.
+- The code can be a complete function, a script, or a code block — but must resemble real-world code.
+- Do NOT explain or comment on the bugs.
+- Do NOT use markdown or formatting — return plain raw code only.
+
+Your goal: Create code that tests the learner’s understanding of the topic through intentional bugs.
+
 """
     )
     chain = prompt | llm | output_parser
@@ -110,14 +44,37 @@ def generate_new_problem(context: list, language: str, difficulty: str) -> str:
     prompt = PromptTemplate(
         input_variables=["context", "language", "difficulty", "few_shot_examples"],
         template="""
--Generate a new coding problem in the {language} programming language at a {difficulty} level.
--Do not provide symbols like (*) in the response
-- Do not provide heading called problem statement as we have it already in our frontend.
--Base the problem entirely on the following topic: {context}
-- The output response should be properly formatted so that it looks good on frontend app.
+You are a competitive programming problem setter.
 
-All the points mentioned above should be followed in the response
+Generate a high-quality coding problem in {language} at a {difficulty} level.  
+Base the problem entirely on the following topic: {context}
 
+📝 Requirements:
+- Use a style similar to LeetCode, HackerRank, or HackerEarth.
+- The problem must include the following sections:
+
+  **Title**: A concise title for the problem.
+
+  **Description**: A clear and structured explanation of the problem statement. Focus on real-world logic, constraints, or edge cases.
+
+  **Input**: Explain exactly what inputs will be provided.
+
+  **Output**: Describe the expected output.
+
+  **Constraints**: Provide meaningful constraints (e.g., value ranges, input size, performance expectations).
+
+  **Examples**: Include at least 2 input/output examples.  
+    Format like:  
+    Input: ...  
+    Output: ...
+
+❌ Do NOT use markdown (like `**` or `#`)  
+❌ Do NOT include the solution.  
+❌ Do NOT include explanation or hints.  
+✅ Format the response like a real competitive programming problem.
+
+Context:
+{context}
 
 """
     )
@@ -136,21 +93,27 @@ MISSING_CODE_EXAMPLES = {
 }
 
 def generate_incomplete_code(context: list, language: str, difficulty: str) -> str:
-    example = MISSING_CODE_EXAMPLES.get(difficulty, "Complete a partially written function.")
+
     prompt = PromptTemplate(
-        input_variables=["context", "language", "difficulty", "example"],
+        input_variables=["context", "language", "difficulty"],
         template="""
-You are a coding tutor.
-Based on the context: {context}, generate an incomplete {language} function of {difficulty} difficulty.
-Add a # TODO where logic is missing and 1-2 hints as comments.
-Do not return any explanation.
-Example to follow: {example}
-Return only the code.
+You are a programming tutor.
+
+Generate an incomplete {language} code snippet based on the topic: {context}.  
+Design the code to match the following difficulty: {difficulty}.
+
+Instructions:
+- The code should be mostly written, but with some **key parts intentionally left out**.
+- Leave out logical blocks (e.g., conditionals, loop bodies, function definitions, return statements) depending on the difficulty.
+- For medium and hard difficulties, you can leave out multiple non-contiguous parts.
+- Do NOT include explanations or formatting or hints.
+- Output only the raw code.
+
+Goal: The user should complete the missing parts based on their understanding of the topic.
 """
     )
     chain = prompt | llm | output_parser
-    return chain.invoke({"context": context, "language": language, "difficulty": difficulty, "example": example})
-
+    return chain.invoke({"context": context, "language": language, "difficulty": difficulty})
 
 def generate_qa_pairs(context: str, qa_type: str, difficulty: str):
     prompt = PromptTemplate.from_template("""

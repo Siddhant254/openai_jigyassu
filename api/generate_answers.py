@@ -61,7 +61,7 @@ output_parser = StrOutputParser()
 qa_chain = prompt | llm | output_parser
 
 # 🚀 Endpoint to answer questions based on study material
-@router.post("/answer-questions/")
+@router.post("/answer-questions")
 async def answer_questions(request: QARequest):
     try:
         # 1️⃣ Retrieve relevant content from the vector store using subject and chapter name

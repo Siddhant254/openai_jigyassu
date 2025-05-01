@@ -1,6 +1,6 @@
 import os
 
-UPLOAD_DIR = r"C:\Users\Admin\Desktop\Openai\Jigyassu_Backend\data\uploads"
+UPLOAD_DIR = "/home/ubuntu/openai_jigyassu/data/uploads"
 
 def save_study_material(filename: str, content: bytes) -> str:
     """

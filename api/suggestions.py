@@ -13,14 +13,14 @@ openai_api_key = os.getenv("OPENAI_API_KEY")
 
 router = APIRouter()
 
-llm = ChatOpenAI(model="gpt-3.5-turbo", temperature=0.0, openai_api_key=openai_api_key)
+llm = ChatOpenAI(model="gpt-3.5-turbo", temperature=0.7, openai_api_key=openai_api_key)
 
 # ✅ Define the input model with code and problem statement
 class CodeInput(BaseModel):
     code: str
     problem_statement: str  # Added problem statement
 
-@router.post("/suggest-code/")
+@router.post("/suggest-code")
 async def suggest_code(input: CodeInput):
     try:
         # Updated prompt to include problem statement and code for analysis
@@ -42,7 +42,7 @@ Code:
 - Provide 2 different suggestions for the code.
 - only 2 suggestions should be generated at maximum.
 
-Return only your suggestions, formatted as separate paragraphs.
+Return only your suggestions, formatted as separate paragraphs each paragraph should be a bullet point.
 """
         )
 
