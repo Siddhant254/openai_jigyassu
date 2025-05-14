@@ -29,12 +29,19 @@ class AnswerComparisonRequest(BaseModel):
 comparison_prompt = PromptTemplate(
     input_variables=["user_answer", "correct_answer"],
     template="""
-You are an educational expert. You will compare the user's answer with the correct answer.
+You are an educational evaluator.
 
-Here is the user's answer: {user_answer}
-Here is the correct answer: {correct_answer}
+Compare the following short answers and determine if the user's answer is sufficiently correct.
 
-Determine if the user's answer is correct or incorrect. Provide 'correct' if the answer is sufficiently accurate and 'incorrect' if it is not. Do not provide explanations, just return 'correct' or 'incorrect'.
+User's answer: {user_answer}
+Correct answer: {correct_answer}
+
+Consider the following:
+- The user's answer might be brief or missing some context.
+- If the core meaning or important keywords match, consider it correct.
+- If it misses key concepts or changes the meaning, mark it incorrect.
+- Judge the answer based on the semantic meaning as user might not write complete sentence.
+Return only 'correct' or 'incorrect'.
 """
 )
 

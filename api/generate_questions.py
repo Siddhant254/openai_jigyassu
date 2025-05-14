@@ -36,9 +36,9 @@ You are an expert educational content generator for the subject: {subject}.
 
 Using ONLY the content provided below, generate exactly 10 questions from the chapter related to "{chapter_name}" in the following format:
 
-- 4 Multiple Choice Questions along with 4 options  
+- 6 Multiple Choice Questions along with 4 options  
 - 2 Short Answer Questions  
-- 4 Fill in the Blanks  
+- 2 Fill in the Blanks  
 
 ⚠️ For each Multiple Choice Question:
 - Provide a clear question

@@ -31,6 +31,7 @@ Instructions:
 - The code can be a complete function, a script, or a code block — but must resemble real-world code.
 - Do NOT explain or comment on the bugs.
 - Do NOT use markdown or formatting — return plain raw code only.
+- Do not give any hints or comments to help a solver.
 
 Your goal: Create code that tests the learner’s understanding of the topic through intentional bugs.
 
@@ -86,11 +87,6 @@ Context:
     })
 
 # --- Incomplete Code Prompt ---
-MISSING_CODE_EXAMPLES = {
-    "easy": "Write a loop to sum even numbers between 1 and N.",
-    "medium": "Implement binary search logic.",
-    "hard": "Fill missing logic for finding LIS (Longest Increasing Subsequence)."
-}
 
 def generate_incomplete_code(context: list, language: str, difficulty: str) -> str:
 
@@ -99,18 +95,17 @@ def generate_incomplete_code(context: list, language: str, difficulty: str) -> s
         template="""
 You are a programming tutor.
 
-Generate an incomplete {language} code snippet based on the topic: {context}.  
-Design the code to match the following difficulty: {difficulty}.
+Generate an incomplete code snippet **strictly in {language}**, based on the topic: {context}.  
+Do not use any other language.
 
 Instructions:
 - The code should be mostly written, but with some **key parts intentionally left out**.
 - Leave out logical blocks (e.g., conditionals, loop bodies, function definitions, return statements) depending on the difficulty.
 - For medium and hard difficulties, you can leave out multiple non-contiguous parts.
 - Do NOT include explanations or formatting or hints.
-- Output only the raw code.
+- Output only the raw code, and it must be valid {language} syntax.
 
-Goal: The user should complete the missing parts based on their understanding of the topic.
-"""
+Goal: The user should complete the missing parts based on their understanding of the topic."""
     )
     chain = prompt | llm | output_parser
     return chain.invoke({"context": context, "language": language, "difficulty": difficulty})

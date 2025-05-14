@@ -42,7 +42,7 @@ Code:
 - Provide 2 different suggestions for the code.
 - only 2 suggestions should be generated at maximum.
 
-Return only your suggestions, formatted as separate paragraphs each paragraph should be a bullet point.
+Return only your suggestions, formatted as separate paragraphs starting with #.
 """
         )
 

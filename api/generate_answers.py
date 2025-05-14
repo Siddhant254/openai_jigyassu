@@ -76,7 +76,11 @@ async def answer_questions(request: QARequest):
 
         # For MCQ questions, we pass the question and options
         for mcq in request.mcq:
-            question_with_options = f"Question: {mcq.question}\nOptions: {', '.join(mcq.options)}"
+            question_with_options = (
+    f"Question: {mcq.question}\n"
+    f"Options: {', '.join(mcq.options)}\n"
+    "Choose the correct answer **exactly from the options provided.**"
+)
             raw_output = qa_chain.invoke({
                 "context": context,
                 "question": question_with_options
@@ -95,7 +99,10 @@ async def answer_questions(request: QARequest):
         for fill in request.fill_in_the_blank:
             raw_output = qa_chain.invoke({
                 "context": context,
-                "question": f"Fill in the Blank: {fill}"
+                "question": (
+    f"Fill in the blank: {fill}\n"
+    "Return **only** the missing word or phrase, not the full sentence."
+)
             })
             answers.append(raw_output.strip())
 

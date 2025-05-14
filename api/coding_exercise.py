@@ -34,13 +34,13 @@ async def coding_exercise(request: CodingRequest):
             code = generate_incomplete_code(study_material, request.language, request.difficulty)
         else:
             raise HTTPException(status_code=400, detail="Invalid problem type")
-
+        print(f"🔍 Problem Type: {request.problem_type}, Language: {request.language}, Difficulty: {request.difficulty}")
         # 3️⃣ Return the response
         return {
             "language": request.language,
             "problem_type": request.problem_type,
             "difficulty": request.difficulty,
-            "challenge": code
+            "challenge": code.strip("`").split("\n", 1)[-1]
         }
 
     except Exception as e:
