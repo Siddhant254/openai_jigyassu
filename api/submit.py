@@ -13,7 +13,7 @@ openai_api_key = os.getenv("OPENAI_API_KEY")
 
 router = APIRouter()
 
-llm = ChatOpenAI(model="gpt-4o", temperature=0.0, openai_api_key= openai_api_key)
+llm = ChatOpenAI(model="gpt-3.5-turbo", temperature=0.0, openai_api_key= openai_api_key)
 
 class ValidationInput(BaseModel):
     problem_statement: str
@@ -27,7 +27,7 @@ async def validate_solution(input: ValidationInput):
             template=
             """
             You are an expert programming evaluator.
-            Your task is to determine whether the user code correctly solves the provided problem without any type of error.There should not be even a single error which can occur in python programming syntax or runtime.
+            Your task is to determine whether the given code correctly solves the provided problem.
 
             ### Problem:
             {problem}

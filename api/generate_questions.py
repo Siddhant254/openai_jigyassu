@@ -3,7 +3,7 @@ from pydantic import BaseModel
 from langchain.chat_models import ChatOpenAI
 from langchain.prompts import PromptTemplate
 from langchain_core.output_parsers import StrOutputParser
-from utils.vector_store import retrieve_from_vector_db
+from utils.vector_store import retrieve_from_vector_db, init_faiss
 import re
 
 from dotenv import load_dotenv
@@ -12,6 +12,7 @@ import os
 load_dotenv()
 
 openai_api_key = os.getenv("OPENAI_API_KEY")
+
 
 
 router = APIRouter()
@@ -33,6 +34,7 @@ prompt = PromptTemplate(
     input_variables=["context", "subject", "chapter_name"],
     template=""" 
 You are an expert educational content generator for the subject: {subject}.
+Do NOT generate questions or options based on general knowledge or assumptions.
 Using ONLY the study material provided below, generate exactly 10 questions from the chapter related to "{chapter_name}" in the following format:
 
 - 6 Multiple Choice Questions along with 4 options  
@@ -67,6 +69,14 @@ D. Earthquake shaking the ground
 9. Fill in the Blank: The Earth revolves around the ______.
 
 Do not include the answers for the generated questions in your response.
+Ensure each question is based on a **different fact, detail, or concept** from the study material.
+
+Do NOT repeat the same concept or event across multiple questions or formats (e.g., MCQ, short answer, fill in the blank).
+
+For example, if a concept is used in an MCQ, do not reuse it in short answer or fill in the blank questions.
+
+
+
 If the study material is irrelevant to the chapter, respond ONLY with: "Nothing found."
 
 Study Material:
@@ -80,7 +90,9 @@ qa_chain = prompt | llm | output_parser
 # 🚀 Endpoint
 @router.post("/generate-qa")
 async def generate_qa(request: QARequest):
-    print(f"🔍 Inside try block: Subject = {request.subject}, Chapter = {request.chapter_name}")
+    print(f"Received request - Subject: {request.subject}, Chapter: {request.chapter_name}")
+    print(openai_api_key)
+    init_faiss()
     try:
         query = f"{request.subject} - {request.chapter_name}"
         context = retrieve_from_vector_db(query)

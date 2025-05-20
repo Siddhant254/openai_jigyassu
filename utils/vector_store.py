@@ -20,7 +20,7 @@ text_splitter = RecursiveCharacterTextSplitter(
 )
 
 # ✅ FAISS config
-FAISS_DIR =  "/home/ubuntu/openai_jigyassu/data/vectors"
+FAISS_DIR = r"C:\Users\Admin\Desktop\Openai\Jigyassu_Backend\data\vectors"
 FAISS_PATH = os.path.join(FAISS_DIR, "index.faiss")
 
 # Ensure directory exists
@@ -102,4 +102,3 @@ def retrieve_from_vector_db(query: str, subject: str = None, chapter: str = None
         return "❗ No matching documents found with the specified filters."
 
     return "\n".join(doc.page_content for doc in filtered_docs)
-

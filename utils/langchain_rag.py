@@ -10,31 +10,26 @@ load_dotenv()
 openai_api_key = os.getenv("OPENAI_API_KEY")
 
 # ✅ OpenAI LLM setup
-oai_api_key = openai_api_key
-llm = ChatOpenAI(model="gpt-4o", temperature=0.7, openai_api_key=oai_api_key)
+llm = ChatOpenAI(model="gpt-4o", temperature=0.7, openai_api_key=openai_api_key)
 output_parser = StrOutputParser()
-# --- Buggy Code Prompt ---
+
 def generate_buggy_code(context: list, language: str, difficulty: str) -> str:
     prompt = PromptTemplate(
         input_variables=["context", "language", "difficulty"],
         template="""
 You are a programming instructor.
 
-Generate a {language} code snippet related to the topic: {context}.
+Generate a {language} code snippet related to the topic: {context}  
+The code should be designed for learners to debug.
 
 Instructions:
-- Introduce bugs based on the selected difficulty:
-  - easy: 1 simple bug (e.g., typo, wrong operator, off-by-one).
-  - medium: 2 subtle bugs (e.g., flawed logic, wrong data type, bad loop condition).
-  - hard: 3 or more complex bugs (e.g., edge case failures, incorrect algorithm design, nested logic flaws, misuse of built-in functions).
-- The bugs must be realistic and challenge learners to identify and fix them.
-- The code can be a complete function, a script, or a code block — but must resemble real-world code.
-- Do NOT explain or comment on the bugs.
-- Do NOT use markdown or formatting — return plain raw code only.
-- Do not give any hints or comments to help a solver.
+- Introduce exactly one {difficulty}-level bug in the code.
+- The bug should be realistic and related to the topic (e.g., logic error, wrong variable, off-by-one, etc.).
+- The code can be a complete function, a partial block, or a script — but should be runnable.
+- Do NOT include any explanations or comments indicating the bug.
+- Output only the raw code (no markdown, headings, or extra formatting).
 
-Your goal: Create code that tests the learner’s understanding of the topic through intentional bugs.
-
+Goal: The code should challenge learners to identify and fix the bug based on their understanding of the topic.
 """
     )
     chain = prompt | llm | output_parser
@@ -102,13 +97,17 @@ Instructions:
 - The code should be mostly written, but with some **key parts intentionally left out**.
 - Leave out logical blocks (e.g., conditionals, loop bodies, function definitions, return statements) depending on the difficulty.
 - For medium and hard difficulties, you can leave out multiple non-contiguous parts.
-- Do NOT include explanations or formatting or hints.
+- Do NOT include explanations or formatting or hints or comments.
+- Do not include language of the code in the output.
 - Output only the raw code, and it must be valid {language} syntax.
 
-Goal: The user should complete the missing parts based on their understanding of the topic."""
+Goal: The user should complete the missing parts based on their understanding of the topic.
+
+"""
     )
     chain = prompt | llm | output_parser
     return chain.invoke({"context": context, "language": language, "difficulty": difficulty})
+
 
 def generate_qa_pairs(context: str, qa_type: str, difficulty: str):
     prompt = PromptTemplate.from_template("""

@@ -103,9 +103,8 @@ async def answer_questions(request: QARequest):
     f"Fill in the blank: {fill}\n"
     "Return **only** the missing word or phrase, not the full sentence."
 )
-            })
+ })
             answers.append(raw_output.strip())
-        print(context)
         print(answers)
         return {
             "questions": request.dict(),

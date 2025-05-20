@@ -12,9 +12,12 @@ charset-normalizer==3.4.1
 click==8.1.8
 colorama==0.4.6
 dataclasses-json==0.6.7
+distro==1.9.0
+dotenv==0.9.9
 faiss-cpu==1.10.0
 fastapi==0.115.12
 frozenlist==1.5.0
+git-filter-repo==2.47.0
 gitdb==4.0.12
 GitPython==3.1.44
 greenlet==3.1.1
@@ -24,6 +27,7 @@ httpx==0.28.1
 httpx-sse==0.4.0
 idna==3.10
 Jinja2==3.1.6
+jiter==0.9.0
 jsonpatch==1.33
 jsonpointer==3.0.0
 jsonschema==4.23.0
@@ -40,6 +44,7 @@ mypy-extensions==1.0.0
 narwhals==1.31.0
 numpy==2.2.4
 ollama==0.4.7
+openai==1.70.0
 opencv-python==4.11.0.86
 orjson==3.10.15
 packaging==24.2
@@ -61,6 +66,7 @@ python-multipart==0.0.20
 pytz==2025.1
 PyYAML==6.0.2
 referencing==0.36.2
+regex==2024.11.6
 requests==2.32.3
 requests-toolbelt==1.0.0
 rpds-py==0.23.1
@@ -72,8 +78,10 @@ SQLAlchemy==2.0.39
 starlette==0.46.1
 streamlit==1.43.2
 tenacity==9.0.0
+tiktoken==0.9.0
 toml==0.10.2
 tornado==6.4.2
+tqdm==4.67.1
 typing-inspect==0.9.0
 typing_extensions==4.12.2
 tzdata==2025.2
