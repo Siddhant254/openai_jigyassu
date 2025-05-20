@@ -27,7 +27,7 @@ async def validate_solution(input: ValidationInput):
             template=
             """
             You are an expert programming evaluator.
-            Your task is to determine whether the user code correctly solves the provided problem without any type of error.
+            Your task is to determine whether the user code correctly solves the provided problem without any type of error.There should not be even a single error which can occur in python programming syntax or runtime.
 
             ### Problem:
             {problem}

@@ -33,8 +33,7 @@ prompt = PromptTemplate(
     input_variables=["context", "subject", "chapter_name"],
     template=""" 
 You are an expert educational content generator for the subject: {subject}.
-
-Using ONLY the content provided below, generate exactly 10 questions from the chapter related to "{chapter_name}" in the following format:
+Using ONLY the study material provided below, generate exactly 10 questions from the chapter related to "{chapter_name}" in the following format:
 
 - 6 Multiple Choice Questions along with 4 options  
 - 2 Short Answer Questions  
@@ -68,9 +67,7 @@ D. Earthquake shaking the ground
 9. Fill in the Blank: The Earth revolves around the ______.
 
 Do not include the answers for the generated questions in your response.
-
-If the content seems general but related, attempt to create questions anyway.
-Only respond with "Nothing found" if there's clearly no usable information at all."
+If the study material is irrelevant to the chapter, respond ONLY with: "Nothing found."
 
 Study Material:
 {context}
@@ -186,6 +183,7 @@ async def generate_qa(request: QARequest):
             if current_mcq and len(current_mcq["options"]) > 0:
                 questions["mcq"].append(current_mcq)
         print(questions)
+        print(context)
         return questions if any(questions.values()) else {"questions": "Nothing found."}
 
     except Exception as e:

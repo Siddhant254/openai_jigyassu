@@ -105,7 +105,8 @@ async def answer_questions(request: QARequest):
 )
             })
             answers.append(raw_output.strip())
-
+        print(context)
+        print(answers)
         return {
             "questions": request.dict(),
             "answers": answers
