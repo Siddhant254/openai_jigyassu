@@ -20,7 +20,7 @@ text_splitter = RecursiveCharacterTextSplitter(
 )
 
 # ✅ FAISS config
-FAISS_DIR = r"C:\Users\Admin\Desktop\Openai\Jigyassu_Backend\data\vectors"
+FAISS_DIR = "/home/ubuntu/openai_jigyassu/data/vectors"
 FAISS_PATH = os.path.join(FAISS_DIR, "index.faiss")
 
 # Ensure directory exists
@@ -80,7 +80,7 @@ def store_in_vector_db(text: str, metadata: dict = None):
         print("📦 Added documents and saved updated FAISS index.")
 
 
-def retrieve_from_vector_db(query: str, subject: str = None, chapter: str = None, k: int = 10) -> str:
+def retrieve_from_vector_db(query: str, subject: str = None, chapter: str = None, k: int = 100) -> str:
     """
     Retrieves top-k relevant documents from FAISS DB, with optional metadata filtering.
     """
@@ -88,6 +88,7 @@ def retrieve_from_vector_db(query: str, subject: str = None, chapter: str = None
         raise ValueError("❌ FAISS index is not initialized. Please call init_faiss first.")
 
     all_docs = faiss_index.similarity_search(query, k=k)
+    print(f"Retrieved {len(all_docs)} documents for query: '{query}'")
 
     # Filter by metadata
     filtered_docs = []

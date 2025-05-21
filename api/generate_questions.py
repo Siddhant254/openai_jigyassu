@@ -69,8 +69,6 @@ D. Earthquake shaking the ground
 9. Fill in the Blank: The Earth revolves around the ______.
 
 Do not include the answers for the generated questions in your response.
-Ensure each question is based on a **different fact, detail, or concept** from the study material.
-
 Do NOT repeat the same concept or event across multiple questions or formats (e.g., MCQ, short answer, fill in the blank).
 
 For example, if a concept is used in an MCQ, do not reuse it in short answer or fill in the blank questions.
@@ -91,11 +89,11 @@ qa_chain = prompt | llm | output_parser
 @router.post("/generate-qa")
 async def generate_qa(request: QARequest):
     print(f"Received request - Subject: {request.subject}, Chapter: {request.chapter_name}")
-    print(openai_api_key)
     init_faiss()
     try:
         query = f"{request.subject} - {request.chapter_name}"
         context = retrieve_from_vector_db(query)
+        print(context)
 
         if not context:
             raise HTTPException(status_code=404, detail="No relevant study material found.")
