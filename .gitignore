@@ -6,3 +6,5 @@ __pycache__/
 .venv
 /data/vectors/
 
+data/vectors/*.faiss
+data/vectors/*.pkl
