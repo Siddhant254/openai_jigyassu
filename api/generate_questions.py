@@ -12,6 +12,7 @@ import os
 load_dotenv()
 
 openai_api_key = os.getenv("OPENAI_API_KEY")
+model = os.getenv("OPENAI_MODEL")
 
 
 
@@ -19,7 +20,7 @@ router = APIRouter()
 
 # 🧠 LLM setup
 llm = ChatOpenAI(
-    model="gpt-4o",
+    model=model,
     temperature=0.7,
     openai_api_key= openai_api_key
 )

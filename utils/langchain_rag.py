@@ -8,9 +8,10 @@ from dotenv import load_dotenv
 load_dotenv()
 
 openai_api_key = os.getenv("OPENAI_API_KEY")
+model = os.getenv("OPENAI_MODEL")
 
 # ✅ OpenAI LLM setup
-llm = ChatOpenAI(model="gpt-4o", temperature=0.7, openai_api_key=openai_api_key)
+llm = ChatOpenAI(model=model, temperature=0.7, openai_api_key=openai_api_key)
 output_parser = StrOutputParser()
 
 def generate_buggy_code(context: list, language: str, difficulty: str) -> str:

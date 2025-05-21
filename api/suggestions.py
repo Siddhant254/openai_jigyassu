@@ -10,10 +10,11 @@ import os
 load_dotenv()
 
 openai_api_key = os.getenv("OPENAI_API_KEY")
+model = os.getenv("OPENAI_MODEL")
 
 router = APIRouter()
 
-llm = ChatOpenAI(model="gpt-4o", temperature=0.0, openai_api_key=openai_api_key)
+llm = ChatOpenAI(model=model, temperature=0.0, openai_api_key=openai_api_key)
 
 # ✅ Define the input model with code and problem statement
 class CodeInput(BaseModel):

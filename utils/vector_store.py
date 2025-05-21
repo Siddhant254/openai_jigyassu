@@ -5,7 +5,13 @@ from langchain_core.documents import Document
 from langchain_community.vectorstores import FAISS
 from langchain_community.embeddings import OpenAIEmbeddings
 
-load_dotenv()
+# Get absolute path to the .env file in the project root
+project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+dotenv_path = os.path.join(project_root, ".env")
+
+load_dotenv(dotenv_path)
+print("FAISS_DIR:", os.getenv("FAISS_DIR"))
+print("UPLOAD_DIR:", os.getenv("UPLOAD_DIR"))
 
 # ✅ Environment config
 openai_api_key = os.getenv("OPENAI_API_KEY")
@@ -20,7 +26,7 @@ text_splitter = RecursiveCharacterTextSplitter(
 )
 
 # ✅ FAISS config
-FAISS_DIR = "/home/ubuntu/openai_jigyassu/data/vectors"
+FAISS_DIR = os.getenv("FAISS_DIR")
 FAISS_PATH = os.path.join(FAISS_DIR, "index.faiss")
 
 # Ensure directory exists

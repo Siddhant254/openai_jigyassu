@@ -1,6 +1,9 @@
 import os
+from dotenv import load_dotenv
 
-UPLOAD_DIR = "/home/ubuntu/openai_jigyassu/data/uploads"
+base_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+load_dotenv(os.path.join(base_dir, ".env"))
+UPLOAD_DIR = os.getenv("UPLOAD_DIR")
 
 def save_study_material(filename: str, content: bytes) -> str:
     """
