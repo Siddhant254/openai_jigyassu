@@ -9,6 +9,7 @@ from api.compare_answers import router as compare_answers_routers # compare answ
 from api.flashcard import router as flashcard_router
 from fastapi.middleware.cors import CORSMiddleware
 from utils.vector_store import init_faiss
+from api.user_data import router as user_router
 app = FastAPI()
 
 # Initialize FAISS on app startup
@@ -33,6 +34,7 @@ app.include_router(questions_router,prefix="/api")
 app.include_router(answers_router,prefix="/api")
 app.include_router(compare_answers_routers,prefix="/api")
 app.include_router(flashcard_router,prefix="/api")
+app.include_router(user_router,prefix="/api")
 
 if __name__ == "__main__":
     import uvicorn

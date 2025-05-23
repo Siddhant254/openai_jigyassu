@@ -110,20 +110,20 @@ Goal: The user should complete the missing parts based on their understanding of
     return chain.invoke({"context": context, "language": language, "difficulty": difficulty})
 
 
-def generate_qa_pairs(context: str, qa_type: str, difficulty: str):
-    prompt = PromptTemplate.from_template("""
-    You are an intelligent assistant. Based on the study material below, generate 3 {qa_type} questions and answers.
-    Keep them {difficulty} level.
+# def generate_qa_pairs(context: str, qa_type: str, difficulty: str):
+#     prompt = PromptTemplate.from_template("""
+#     You are an intelligent assistant. Based on the study material below, generate 3 {qa_type} questions and answers.
+#     Keep them {difficulty} level.
 
-    Study Material:
-    {context}
+#     Study Material:
+#     {context}
 
-    Format:
-    Q1: ...
-    A1: ...
-    """)
+#     Format:
+#     Q1: ...
+#     A1: ...
+#     """)
 
-    llm = ChatOpenAI(model_name="gpt-3.5-turbo", temperature=0.7)
-    chain = LLMChain(llm=llm, prompt=prompt)
+#     llm = ChatOpenAI(model_name="gpt-3.5-turbo", temperature=0.7)
+#     chain = LLMChain(llm=llm, prompt=prompt)
 
-    return chain.run(qa_type=qa_type, difficulty=difficulty, context=context)
+#     return chain.run(qa_type=qa_type, difficulty=difficulty, context=context)

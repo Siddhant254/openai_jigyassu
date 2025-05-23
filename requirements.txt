@@ -5,6 +5,7 @@ altair==5.5.0
 annotated-types==0.7.0
 anyio==4.9.0
 attrs==25.3.0
+bcrypt==4.3.0
 blinker==1.9.0
 cachetools==5.5.2
 certifi==2025.1.31
@@ -49,6 +50,7 @@ opencv-python==4.11.0.86
 orjson==3.10.15
 packaging==24.2
 pandas==2.2.3
+passlib==1.7.4
 pillow==11.1.0
 propcache==0.3.0
 protobuf==5.29.4

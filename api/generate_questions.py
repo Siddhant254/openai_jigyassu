@@ -27,16 +27,17 @@ llm = ChatOpenAI(
 
 # 📥 Request model
 class QARequest(BaseModel):
+    material_id : str
     subject: str
-    chapter_name: str
+    chapter: str
 
 # 📝 Updated Prompt Template
 prompt = PromptTemplate(
-    input_variables=["context", "subject", "chapter_name"],
+    input_variables=["context"],
     template=""" 
-You are an expert educational content generator for the subject: {subject}.
+You are an expert educational content generator.
 Do NOT generate questions or options based on general knowledge or assumptions.
-Using ONLY the study material provided below, generate exactly 10 questions from the chapter related to "{chapter_name}" in the following format:
+Using ONLY the study material provided below, generate exactly 10 questions in the following format:
 
 - 6 Multiple Choice Questions along with 4 options  
 - 2 Short Answer Questions  
@@ -63,7 +64,6 @@ B. Sea rising and forming whirlpools
 C. Snowstorm approaching
 D. Earthquake shaking the ground
 
-
 5. Short Answer: ...  
 ...  
 
@@ -73,15 +73,11 @@ Do not include the answers for the generated questions in your response.
 Do NOT repeat the same concept or event across multiple questions or formats (e.g., MCQ, short answer, fill in the blank).
 
 For example, if a concept is used in an MCQ, do not reuse it in short answer or fill in the blank questions.
-
-
-
-If the study material is irrelevant to the chapter, respond ONLY with: "Nothing found."
-
 Study Material:
 {context}
 """
 )
+
 
 output_parser = StrOutputParser()
 qa_chain = prompt | llm | output_parser
@@ -89,24 +85,24 @@ qa_chain = prompt | llm | output_parser
 # 🚀 Endpoint
 @router.post("/generate-qa")
 async def generate_qa(request: QARequest):
-    print(f"Received request - Subject: {request.subject}, Chapter: {request.chapter_name}")
     init_faiss()
     try:
-        query = f"{request.subject} - {request.chapter_name}"
-        context = retrieve_from_vector_db(query)
-        print(context)
+        context = retrieve_from_vector_db(
+            subject=request.subject,
+            chapter=request.chapter,
+            material_id = request.material_id)
+        print("STUDY MATERIAL FETCHED",context)
+        print("LENGTH OF STUDY MATERIAL",len(context))
 
         if not context:
             raise HTTPException(status_code=404, detail="No relevant study material found.")
 
         raw_output = qa_chain.invoke({
-            "context": context,
-            "subject": request.subject,
-            "chapter_name": request.chapter_name
+            "context": context
         })
-
-        if "nothing found" in raw_output.lower():
-            return {"questions": "Nothing found."}
+        print("RAW OUTPUT",raw_output)
+        print("Context length", len(raw_output))
+        print("Study Material length", len(context))
 
         # Initialize question categories
         questions = {

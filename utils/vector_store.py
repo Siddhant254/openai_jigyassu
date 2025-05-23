@@ -22,7 +22,7 @@ embedding_function = OpenAIEmbeddings(openai_api_key=openai_api_key)
 # ✅ Text Splitter
 text_splitter = RecursiveCharacterTextSplitter(
     chunk_size=500,
-    chunk_overlap=50
+    chunk_overlap=20
 )
 
 # ✅ FAISS config
@@ -65,10 +65,11 @@ def store_in_vector_db(text: str, metadata: dict = None):
     Creates new index if one doesn't exist.
     """
     global faiss_index
+    metadata= metadata or {}
 
     # Split and prepare documents
     chunks = text_splitter.split_text(text)
-    documents = [Document(page_content=chunk, metadata=metadata or {}) for chunk in chunks]
+    documents = [Document(page_content=chunk, metadata=metadata) for chunk in chunks]
 
     # Load or create index
     if faiss_index is None:
@@ -86,22 +87,30 @@ def store_in_vector_db(text: str, metadata: dict = None):
         print("📦 Added documents and saved updated FAISS index.")
 
 
-def retrieve_from_vector_db(query: str, subject: str = None, chapter: str = None, k: int = 100) -> str:
+def retrieve_from_vector_db(
+        query: str = None,
+        subject: str = None,
+        chapter: str = None,
+        material_id: str = None,
+        k: int = 10) -> str:
     """
     Retrieves top-k relevant documents from FAISS DB, with optional metadata filtering.
     """
     if faiss_index is None:
         raise ValueError("❌ FAISS index is not initialized. Please call init_faiss first.")
 
-    all_docs = faiss_index.similarity_search(query, k=k)
-    print(f"Retrieved {len(all_docs)} documents for query: '{query}'")
+    all_docs = faiss_index.docstore._dict.values()
+    print(f"Retrieved {len(all_docs)}")
 
     # Filter by metadata
     filtered_docs = []
     for doc in all_docs:
+        print("Doc metadata:", doc.metadata)
         if subject and doc.metadata.get("subject") != subject:
             continue
         if chapter and doc.metadata.get("chapter") != chapter:
+            continue
+        if material_id and doc.metadata.get("material_id") != material_id:
             continue
         filtered_docs.append(doc)
 
