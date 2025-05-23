@@ -88,33 +88,44 @@ def store_in_vector_db(text: str, metadata: dict = None):
 
 
 def retrieve_from_vector_db(
-        query: str = None,
-        subject: str = None,
-        chapter: str = None,
-        material_id: str = None,
-        k: int = 10) -> str:
+    query: str = None,
+    subject: str = None,
+    chapter: str = None,
+    material_id: str = None,
+    k: int = 10
+) -> str:
     """
-    Retrieves top-k relevant documents from FAISS DB, with optional metadata filtering.
+    Retrieves relevant documents from FAISS DB.
+    - If `material_id` is provided, fetch docs with matching metadata.
+    - If `query` is provided (e.g., natural language), perform similarity search.
     """
     if faiss_index is None:
         raise ValueError("❌ FAISS index is not initialized. Please call init_faiss first.")
 
-    all_docs = faiss_index.docstore._dict.values()
-    print(f"Retrieved {len(all_docs)}")
+    # 🔍 Case 1: Use material_id metadata filtering (used in coding module)
+    if material_id:
+        all_docs = faiss_index.docstore._dict.values()
+        filtered_docs = []
 
-    # Filter by metadata
-    filtered_docs = []
-    for doc in all_docs:
-        print("Doc metadata:", doc.metadata)
-        if subject and doc.metadata.get("subject") != subject:
-            continue
-        if chapter and doc.metadata.get("chapter") != chapter:
-            continue
-        if material_id and doc.metadata.get("material_id") != material_id:
-            continue
-        filtered_docs.append(doc)
+        for doc in all_docs:
+            if material_id and doc.metadata.get("material_id") != material_id:
+                continue
+            if subject and doc.metadata.get("subject") != subject:
+                continue
+            if chapter and doc.metadata.get("chapter") != chapter:
+                continue
+            filtered_docs.append(doc)
 
-    if not filtered_docs:
-        return "❗ No matching documents found with the specified filters."
+        if not filtered_docs:
+            return "❗ No matching documents found with the specified metadata."
 
-    return "\n".join(doc.page_content for doc in filtered_docs)
+        return "\n".join(doc.page_content for doc in filtered_docs)
+
+    # 🧠 Case 2: Use semantic similarity search (used in assessment module)
+    elif query:
+        results = faiss_index.similarity_search(query, k=k)
+        if not results:
+            return "❗ No relevant documents found for the query."
+        return "\n".join(doc.page_content for doc in results)
+
+    return "❗ You must provide either a query or a material_id."
