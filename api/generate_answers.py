@@ -31,7 +31,8 @@ class QARequest(BaseModel):
     short_answer: list[str]  # List of short answer questions
     fill_in_the_blank: list[str]  # List of fill-in-the-blank questions
     subject: str
-    chapter_name: str
+    chapter: str
+    material_id: str
 
 # 📥 Request model for generating answers
 class AnswerRequest(BaseModel):
@@ -66,8 +67,10 @@ qa_chain = prompt | llm | output_parser
 async def answer_questions(request: QARequest):
     try:
         # 1️⃣ Retrieve relevant content from the vector store using subject and chapter name
-        query = f"{request.subject} - {request.chapter_name}"
-        context = retrieve_from_vector_db(query)
+        context = retrieve_from_vector_db(
+            subject=request.subject,
+            chapter = request.chapter,
+            material_id = request.material_id)
 
         if not context:
             raise HTTPException(status_code=404, detail="No relevant study material found.")
