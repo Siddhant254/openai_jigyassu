@@ -24,7 +24,7 @@ def signup(user: schemas.UserCreate, db: Session = Depends(get_db)):
     if user.password != user.confirm_password:
         raise HTTPException(status_code=400, detail="Passwords do not match")
     
-    existing_user = db.query(models.User).filter(models.User.email == user.email)
+    existing_user = db.query(models.User).filter(models.User.email == user.email).first()
     if existing_user:
         raise HTTPException(status_code=400, detail="Email already registered")
     
