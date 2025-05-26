@@ -4,11 +4,16 @@ from models import models
 from schemas import schemas
 from db.database import SessionLocal, engine
 from utils.password import hash_password,verify_password
+from pydantic import BaseModel
 
 # Create database tables
 models.Base.metadata.create_all(bind=engine)
 
 router = APIRouter()
+
+class LoginRequest(BaseModel):
+    email: str
+    password: str
 
 # Dependency to get DB session
 def get_db():
@@ -43,10 +48,10 @@ def signup(user: schemas.UserCreate, db: Session = Depends(get_db)):
     return new_user
 
 # Login Route
-@router.post("/login", response_model = schemas.UserResponse)
-def login(email: str = Form(...),password: str = Form(...),db: Session = Depends(get_db)):
-    user = db.query(models.User).filter(models.User.email == email).first()
-    if not user or not verify_password(password, user.password):
+@router.post("/login")
+def login(data: LoginRequest,db: Session = Depends(get_db)):
+    user = db.query(models.User).filter(models.User.email == data.email).first()
+    if not user or not verify_password(data.password, user.password):
         raise HTTPException(status_code=401, detail="Invalid Credentials")
     
     return {"message": "Login Successful", "user_id": user.id }
