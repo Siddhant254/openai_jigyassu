@@ -4,40 +4,49 @@ from utils.vector_store import retrieve_from_vector_db
 from utils.langchain_rag import (
     generate_buggy_code, 
     generate_new_problem, 
-    generate_incomplete_code
+    generate_incomplete_code,
+    generate_fallback_buggy_code,
+    generate_fallback_incomplete_code,
+    generate_fallback_new_problem
 )
 
 router = APIRouter()
 
-# ✅ Define the request model
+# Define the request model
 class CodingRequest(BaseModel):
     language: str
     problem_type: str  # "bug_finding", "new_code", or "missing_code"
-    query: str
+    query: str = None
     difficulty: str = "medium"  # default to "medium" if not provided
 
 @router.post("/coding-exercise")
 async def coding_exercise(request: CodingRequest):
     try:
-        # 1️⃣ Retrieve relevant content from the vector store using RAG
-        study_material = retrieve_from_vector_db(request.query)
+        # 1️⃣ Try retrieving content from vector store
+        if request.query:
+            study_material = retrieve_from_vector_db(request.query)
+        else:
+            study_material = None
 
-        if not study_material:
-            raise HTTPException(status_code=404, detail="No study material found")
-
-        # 2️⃣ Generate the challenge based on the type
+        # 2️⃣ Choose appropriate generation function
         if request.problem_type == "bug_finding":
-            code = generate_buggy_code(study_material, request.language, request.difficulty)
+            code = (generate_buggy_code(study_material, request.language, request.difficulty)
+                    if study_material else generate_fallback_buggy_code(request.language, request.difficulty))
+
         elif request.problem_type == "new_code":
-            code = generate_new_problem(study_material, request.language, request.difficulty)
+            code = (generate_new_problem(study_material, request.language, request.difficulty)
+                    if study_material else generate_fallback_new_problem(request.language, request.difficulty))
+
         elif request.problem_type == "missing_code":
-            code = generate_incomplete_code(study_material, request.language, request.difficulty)
+            code = (generate_incomplete_code(study_material, request.language, request.difficulty)
+                    if study_material else generate_fallback_incomplete_code(request.language, request.difficulty))
+        
         else:
             raise HTTPException(status_code=400, detail="Invalid problem type")
-        
-        print(f"🔍 Problem Type: {request.problem_type}, Language: {request.language}, Difficulty: {request.difficulty}")
 
-        # 3️⃣ Return the response
+        print(f"Problem Type: {request.problem_type}, Language: {request.language}, Difficulty: {request.difficulty}, Fallback: {'Yes' if not study_material else 'No'}")
+
+        # 3️⃣ Return the challenge response
         return {
             "language": request.language,
             "problem_type": request.problem_type,

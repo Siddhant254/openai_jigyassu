@@ -40,5 +40,6 @@ class StudyMaterial(Base):
     material_id = Column(String, primary_key=True, index=True)
     subject = Column(String)
     chapter = Column(String)
+    concept = Column(String)
     file_path = Column(String)
     content = Column(String)

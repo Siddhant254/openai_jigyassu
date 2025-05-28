@@ -29,6 +29,7 @@ async def upload_file(
     file: UploadFile = File(...),
     subject: str = Form(...),
     chapter: str = Form(...),
+    concept: str = Form(...),
     db: Session = Depends(get_db)
 ):
     # Update in-memory subject-chapter map
@@ -78,6 +79,7 @@ async def upload_file(
             metadata={
                 "subject": subject,
                 "chapter": chapter,
+                "concept": concept,
                 "material_id": material_id
             }
         )
@@ -86,6 +88,7 @@ async def upload_file(
             material_id=material_id, 
             subject=subject,
             chapter=chapter,
+            concept=concept,
             file_path=file_path,
             content=extracted_text
         )
@@ -98,6 +101,7 @@ async def upload_file(
             "material_id": material_id,
             "subject": subject,
             "chapter": chapter,
+            "concept": concept,
             "context": extracted_text
         }
 

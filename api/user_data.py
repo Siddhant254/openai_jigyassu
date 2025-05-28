@@ -57,6 +57,16 @@ def login(data: LoginRequest,db: Session = Depends(get_db)):
     return {"message": "Login Successful", "user_id": user.id }
 
 
+# Get Details of all the users
+@router.get("/all-user-details", response_model=list[schemas.UserBasicInfo])
+def get_all_users(db: Session = Depends(get_db)):
+    users = db.query(models.User).all()
+    
+    if not users:
+        raise HTTPException(status_code=404, detail="No users found")
+    
+    return users
+
 
 # # Create a new user
 # @router.post("/user", response_model=schemas.UserResponse)
