@@ -22,6 +22,7 @@ class CodingRequest(BaseModel):
 @router.post("/coding-exercise")
 async def coding_exercise(request: CodingRequest):
     try:
+        study_material = None
         if request.query:
             try:
                 study_material = retrieve_from_vector_db(request.query)
