@@ -22,11 +22,15 @@ class CodingRequest(BaseModel):
 @router.post("/coding-exercise")
 async def coding_exercise(request: CodingRequest):
     try:
-        # 1️⃣ Try retrieving content from vector store
         if request.query:
-            study_material = retrieve_from_vector_db(request.query)
+            try:
+                study_material = retrieve_from_vector_db(request.query)
+            except Exception as e:
+                print("Vector DB Error:", e)
+                study_material = None
         else:
             study_material = None
+
 
         # 2️⃣ Choose appropriate generation function
         if request.problem_type == "bug_finding":

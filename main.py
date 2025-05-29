@@ -18,6 +18,7 @@ app = FastAPI()
 @app.on_event("startup")
 async def startup():
     init_faiss()
+    print("INIT FAISS")
 #  Add CORS middleware to the main FastAPI app
 app.add_middleware(
     CORSMiddleware,
