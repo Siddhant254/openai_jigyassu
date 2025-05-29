@@ -60,4 +60,4 @@ async def coding_exercise(request: CodingRequest):
         }
 
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=500, detail="Invalid API")
