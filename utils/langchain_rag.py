@@ -43,36 +43,44 @@ def generate_new_problem(context: list, language: str, difficulty: str) -> str:
         template="""
 You are a competitive programming problem setter.
 
-Generate a high-quality coding problem in {language} at a {difficulty} level.  
-Base the problem entirely on the following topic: {context}
+Generate a high-quality coding problem in {language} at a {difficulty} level,
+based entirely on the following topic: {context}
 
-📝 Requirements:
-- Use a style similar to LeetCode, HackerRank, or HackerEarth.
-- The problem must include the following sections:
+When determining the difficulty, consider factors such as:
+- Algorithmic complexity required to solve the problem
+- Data structures involved (e.g., arrays, trees, graphs, heaps, hash maps)
+- Problem type (e.g., sorting, dynamic programming, graph traversal, greedy algorithms)
+- Edge cases and constraints (input size, time and memory limits)
+- Logical and implementation complexity
 
-  **Title**: A concise title for the problem.
+Requirements:
+- Follow the style of platforms like LeetCode, HackerRank, or HackerEarth.
+- Include these sections in the problem statement:
 
-  **Description**: A clear and structured explanation of the problem statement. Focus on real-world logic, constraints, or edge cases.
+  Title: A concise, descriptive title for the problem.
 
-  **Input**: Explain exactly what inputs will be provided.
+  Description: A clear and detailed explanation of the problem, including real-world logic,
+  relevant constraints, and possible edge cases.
 
-  **Output**: Describe the expected output.
+  Input: Specify exactly what input the program will receive.
 
-  **Constraints**: Provide meaningful constraints (e.g., value ranges, input size, performance expectations).
+  Output: Describe the expected output clearly.
 
-  **Examples**: Include at least 2 input/output examples.  
-    Format like:  
-    Input: ...  
-    Output: ...
+  Constraints: Provide meaningful constraints such as input size limits, value ranges, and
+  performance expectations.
 
-❌ Do NOT use markdown (like `**` or `#`)  
-❌ Do NOT include the solution.  
-❌ Do NOT include explanation or hints.  
-✅ Format the response like a real competitive programming problem.
+  Examples: Provide at least two input/output examples in the format:
+    Input:
+    Output:
+
+Do NOT:
+- Use markdown formatting (e.g., **bold**, # headers)
+- Include the solution or hints
+
+Ensure the response is formatted exactly like a real competitive programming problem.
 
 Context:
 {context}
-
 """
     )
     chain = prompt | llm | output_parser

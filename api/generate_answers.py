@@ -45,7 +45,7 @@ prompt = PromptTemplate(
     template="""
 You are an expert educational evaluator.
 
-You will answer the following question based on the provided study material. 
+You will answer the following question based on the provided context. 
 If the answer is clear, concise, and based on the context, provide it directly. 
 If you are unsure or need to make assumptions, explain them as well.
 
@@ -70,7 +70,8 @@ async def answer_questions(request: QARequest):
         context = retrieve_from_vector_db(
             subject=request.subject,
             chapter = request.chapter,
-            material_id = request.material_id)
+            material_id = request.material_id,
+            k= 50)
 
         if not context:
             raise HTTPException(status_code=404, detail="No relevant study material found.")
