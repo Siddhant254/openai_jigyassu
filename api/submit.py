@@ -46,7 +46,7 @@ Your task is to determine whether the following user-submitted code correctly so
 ### Your Response Should Include:
 - One of the following verdicts:
   - **Correct Solution**
-  - **Incorrect Solution**
+  - **Incorrect solution**
 - A brief explanation for your verdict.
 - If incorrect, clearly mention what the code is doing wrong.
 - Suggest areas of improvement (e.g., syntax, logic, edge cases, code structure).
