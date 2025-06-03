@@ -40,7 +40,7 @@ Your task is to determine whether the following user-submitted code correctly so
 ### Evaluation Instructions:
 1. First, analyze the problem carefully and understand what the code is expected to do.
 2. Run the code mentally or simulate its execution using appropriate test cases based on the problem.
-3. Identify any syntax errors, logical errors, missing function calls, or edge case issues.
+3. Identify any syntax errors, Exceptions, logical errors, missing function calls, or edge case issues.
 4. Evaluate the correctness of the approach, completeness of the logic, and code quality.
 
 ### Your Response Should Include:
@@ -51,6 +51,7 @@ Your task is to determine whether the following user-submitted code correctly so
 - If incorrect, clearly mention what the code is doing wrong.
 - Suggest areas of improvement (e.g., syntax, logic, edge cases, code structure).
 - Mention the programming concepts or topics involved in the solution (e.g., loops, recursion, string manipulation, etc.).
+- Ignore the upper case/lower case conventions for verdicts.
 
 Be honest, concise, and constructive in your feedback.
             """ )
