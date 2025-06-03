@@ -28,15 +28,31 @@ async def validate_solution(input: ValidationInput):
             template=
             """
             You are an expert programming evaluator.
-            Your task is to determine whether the given code correctly solves the provided problem.
 
-            ### Problem:
-            {problem}
+Your task is to determine whether the following user-submitted code correctly solves the given problem.
 
-            ### User's Code:
-            {code}
-            Respond with one of the following options:Correct solution or Incorrect solution.
-            Also tell the topics and areas of improvement for the user by analyzing the code written by the user.
+### Problem Statement:
+{problem}
+
+### User's Code:
+{code}
+
+### Evaluation Instructions:
+1. First, analyze the problem carefully and understand what the code is expected to do.
+2. Run the code mentally or simulate its execution using appropriate test cases based on the problem.
+3. Identify any syntax errors, logical errors, missing function calls, or edge case issues.
+4. Evaluate the correctness of the approach, completeness of the logic, and code quality.
+
+### Your Response Should Include:
+- One of the following verdicts:
+  - **Correct Solution**
+  - **Incorrect Solution**
+- A brief explanation for your verdict.
+- If incorrect, clearly mention what the code is doing wrong.
+- Suggest areas of improvement (e.g., syntax, logic, edge cases, code structure).
+- Mention the programming concepts or topics involved in the solution (e.g., loops, recursion, string manipulation, etc.).
+
+Be honest, concise, and constructive in your feedback.
             """ )
         
         output_parser = StrOutputParser()
