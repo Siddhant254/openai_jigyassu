@@ -92,7 +92,7 @@ def retrieve_from_vector_db(
     subject: str = None,
     chapter: str = None,
     material_id: str = None,
-    k: int = 10
+    k: int = 50
 ) -> str:
     """
     Retrieves relevant documents from FAISS DB.
